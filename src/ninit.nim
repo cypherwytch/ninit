@@ -1,4 +1,5 @@
 import os, strformat, std/paths
+import regex
 import cligen
 import shell
 
@@ -17,6 +18,7 @@ type
 
 
 
+const defaultNimVersion = "2.0.0"
 const srcDir = "src"
 const testDir = "tests"
 
@@ -145,6 +147,17 @@ proc getWelcomeMessage*(): string = "Hello, World!"
 """
 
 
+proc getNimVersion(): string =
+    var versionFullText = ""
+    shellAssign:
+        versionFullText = nim --version
+    var m: RegexMatch2
+    if versionFullText.find(re2"(\d+\.\d+\.\d+)", m):
+        result = versionFullText[m.boundaries]
+    else:
+        result = defaultNimVersion
+
+
 proc packageName(package: string): string =
     if package == "":
         result = paths.getCurrentDir().lastPathPart().string
@@ -160,6 +173,7 @@ proc gitInit(useGit: bool) =
         shell:
             git init
             git add -A
+
 
 proc initializeHybrid(pinfo: PackageInfo) =
     let
@@ -240,7 +254,7 @@ proc main(
     library = false,
     license = "MIT",
     version = "0.1.0",
-    nimversion = "0.1.0",
+    nimversion = "",
     description = "A new awesome nimble package",
     package: string = ""
 ) =
@@ -249,6 +263,7 @@ proc main(
             raise newException(OSError, "Directory already exists")
         createDir(package)
         setCurrentDir(package)
+    let nVersion = if nimversion.len == 0: getNimVersion() else: nimversion
     let pinfo = PackageInfo(
         git: git,
         binary: binary,
@@ -256,7 +271,7 @@ proc main(
         author: author,
         license: license,
         version: version,
-        nimversion: nimversion,
+        nimversion: nVersion,
         description: description,
         package: packageName(package)
     )

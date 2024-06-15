@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.0.1"
+version       = "1.0.2"
 author        = "Via Stone"
 description   = "Initialize a Nim package non-interactively (does not require nimble)"
 license       = "BSD"

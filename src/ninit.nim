@@ -1,6 +1,9 @@
 import os, strformat, std/paths
 import regex
 import cligen
+
+{.define(shellNoDebugOutput).}
+{.define(shellNoDebugCommand).}
 import shell
 
 

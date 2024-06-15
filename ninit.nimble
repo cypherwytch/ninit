@@ -1,9 +1,9 @@
 # Package
 
-version       = "0.1.0"
+version       = "1.0.0"
 author        = "Via Stone"
-description   = "Initialize a Nim package non-interactively (using nimble)"
-license       = "MIT"
+description   = "Initialize a Nim package non-interactively (does not require nimble)"
+license       = "BSD"
 srcDir        = "src"
 bin           = @["ninit"]
 

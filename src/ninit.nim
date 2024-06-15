@@ -22,6 +22,12 @@ const defaultNimVersion = "2.0.0"
 const srcDir = "src"
 const testDir = "tests"
 
+const fnameGitignore = ".gitignore"
+
+const gitignoreTemplate = """
+{pinfo.package}
+"""
+
 const binarySpecTemplate = """
 installExt    = @["nim"]
 bin           = @["{binary}"]
@@ -168,11 +174,12 @@ proc mkdir(path: string) =
     discard existsOrCreateDir(path)
 
 
-proc gitInit(useGit: bool) =
-    if useGit:
+proc gitInit(pinfo: PackageInfo) =
+    if pinfo.git:
+        let gitignoreTxt = fmt(gitignoreTemplate)
+        fnameGitignore.writeFile(gitignoreTxt)
         shell:
             git init
-            git add -A
 
 
 proc initializeHybrid(pinfo: PackageInfo) =
@@ -195,8 +202,6 @@ proc initializeHybrid(pinfo: PackageInfo) =
     fnameNimble.writeFile(nimbleFileTxt)
     fnameTest1.writeFile(test1Txt)
     fnameTestConfig.writeFile(testConfig)
-    gitInit(pinfo.git)
-
 
 
 proc initializeBinary(pinfo: PackageInfo) =
@@ -231,14 +236,13 @@ proc initializeLibrary(pinfo: PackageInfo) =
     fnameNimble.writeFile(nimbleFileTxt)
     fnameTest1.writeFile(test1Txt)
     fnameTestConfig.writeFile(testConfig)
-    gitInit(pinfo.git)
 
 
 template hybrid(pinfo: PackageInfo): bool = pinfo.binary == pinfo.library
 
 
 proc initialize(pinfo: PackageInfo) =
-    gitInit(pinfo.git)
+    gitInit(pinfo)
     if pinfo.hybrid:
         pinfo.initializeHybrid()
     elif pinfo.binary:
